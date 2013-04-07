@@ -47,8 +47,10 @@ class AMongoObject(object):
         self.pipeline.append({'$project': project_stage})
         return self
 
-    def match(self, **kwargs):
-        self.pipeline.append({'$match': kwargs})
+    def match(self, condition=None, **kwargs):
+        if condition is not None and kwargs:
+            raise Exception('Passing both condition and keyword arguments is unsupported')
+        self.pipeline.append({'$match': kwargs if kwargs else condition})
         return self
 
     where = match
@@ -84,5 +86,26 @@ class AMongoObject(object):
         return self
 
 
-def sum(field):
-    return {'$sum': '$%s' % field}
+for _ in [1]:  # not to clutter global scope
+    def get_func(fname):
+        def func(expr):
+            return {'$%s' % fname: '$%s' % expr if isinstance(expr, basestring) else expr}
+
+        func.__name__ = fname
+        return func
+
+    for fname in ['addToSet', 'first', 'last', 'max', 'min', 'avg', 'push', 'sum']:
+        closure_fname = fname[:]
+        globals()['%s_' % fname] = get_func(fname)
+
+
+def and_(a, b):
+    return {'$and': [a, b]}
+
+
+def or_(a, b):
+    return {'$or': [a, b]}
+
+
+def not_(a):
+    return {'$not': a}
