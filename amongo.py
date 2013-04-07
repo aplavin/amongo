@@ -55,9 +55,12 @@ class AMongoObject(object):
         self.pipeline.append({'$sort': {key: d for key, d in by}})
         return self
 
-    def limit(self, count):
+    def limit(self, count, skip=None):
+        if skip is not None:
+            self.pipeline.append({'$skip': skip})
         self.pipeline.append({'$limit': count})
         return self
 
-    def top(self, number_of_items, **kwargs):
-        return self.sort(**kwargs).limit(number_of_items)
+    def skip(self, count):
+        self.pipeline.append({'$skip': count})
+        return self
