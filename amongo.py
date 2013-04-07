@@ -16,7 +16,7 @@ class AMongoObject(object):
         else:
             return self.collection.find()
 
-    def group(self, by=None, count=False):
+    def group(self, by, count=False):
         group_stage = {}
         project_stage = {}
 
@@ -42,3 +42,16 @@ class AMongoObject(object):
         self.pipeline.append({'$group': group_stage})
         self.pipeline.append({'$project': project_stage})
         return self
+
+    def sort(self, **kwargs):
+        presets = {True: 1, 'asc': 1, 'desc': -1}
+        by = [(key, presets[d] if d in presets else d) for key, d in kwargs.items()]
+        self.pipeline.append({'$sort': {key: d for key, d in by}})
+        return self
+
+    def limit(self, count):
+        self.pipeline.append({'$limit': count})
+        return self
+
+    def top(self, number_of_items, **kwargs):
+        return self.sort(**kwargs).limit(number_of_items)
