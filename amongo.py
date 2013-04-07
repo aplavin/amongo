@@ -1,4 +1,5 @@
 from bson.son import SON
+from pymongo.collection import Collection
 
 
 class AMongoObject(object):
@@ -86,6 +87,9 @@ class AMongoObject(object):
         return self
 
 
+Collection.a = property(lambda coll: AMongoObject(coll))
+
+
 for _ in [1]:  # not to clutter global scope
     def get_func(fname):
         def func(expr):
@@ -99,9 +103,14 @@ for _ in [1]:  # not to clutter global scope
         globals()['%s_' % fname] = get_func(fname)
 
 
-def and_(a, b):
-    return {'$and': [a, b]}
+for _ in [1]:  # not to clutter global scope
+    def get_func(fname):
+        def func(expr_a, expr_b):
+            return {'$%s' % fname: [expr_a, expr_b]}
 
+        func.__name__ = fname
+        return func
 
-def or_(a, b):
-    return {'$or': [a, b]}
+    for fname in ['and', 'or', 'cmp', 'eq', 'gt', 'gte', 'lt', 'lte', 'ne']:
+        closure_fname = fname[:]
+        globals()['%s_' % fname] = get_func(fname)
