@@ -3,7 +3,7 @@ from distutils.core import setup
 setup(
     name='amongo',
     version='',
-    packages=['amongo'],
+    py_modules=['amongo'],
     url='',
     license='',
     author='alexander',
