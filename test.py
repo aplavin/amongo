@@ -12,7 +12,7 @@ class AMongoTest(unittest.TestCase):
 
     def test_group(self):
         amo = AMongoObject(self.coll)
-        amo.group(by=('host',))
+        amo.group(by=('host',), count=True)
         print amo.execute()
 
 

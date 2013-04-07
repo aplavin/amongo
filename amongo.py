@@ -1,3 +1,4 @@
+from operator import getitem
 
 
 class AMongoObject(object):
@@ -15,20 +16,25 @@ class AMongoObject(object):
         else:
             return self.collection.find()
 
-    def group(self, **kwargs):
+    def group(self, by=None, count=False):
         group_stage = {}
         project_stage = {}
 
         group_stage['_id'] = {}
 
-        if isinstance(kwargs['by'], basestring):
-            kwargs['by'] = (kwargs['by'], )
+        if isinstance(by, basestring):
+            by = (by, )
 
-        for key_part in kwargs['by']:
+        for key_part in by:
             if isinstance(key_part, basestring):
                 group_stage['_id'][key_part] = '$%s' % key_part
                 project_stage[key_part] = '$_id.%s' % key_part
+            else:
+                raise Exception('Unsupported value in "by" parameter')
 
+        if count is True:
+            group_stage['count'] = {'$sum': 1}
+            project_stage['count'] = True
 
         if '_id' not in project_stage:
             project_stage['_id'] = False
