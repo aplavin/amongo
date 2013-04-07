@@ -5,6 +5,7 @@ setup(
     version='',
     py_modules=['amongo'],
     test_suite='test',
+    requires=['pymongo'],
     url='',
     license='',
     author='alexander',
