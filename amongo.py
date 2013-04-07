@@ -43,6 +43,12 @@ class AMongoObject(object):
         self.pipeline.append({'$project': project_stage})
         return self
 
+    def match(self, **kwargs):
+        self.pipeline.append({'$match': kwargs})
+        return self
+
+    where = match
+
     def sort(self, **kwargs):
         presets = {True: 1, 'asc': 1, 'desc': -1}
         by = [(key, presets[d] if d in presets else d) for key, d in kwargs.items()]

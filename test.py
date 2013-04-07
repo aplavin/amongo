@@ -12,7 +12,7 @@ class AMongoTest(unittest.TestCase):
 
     def test_group(self):
         amo = AMongoObject(self.coll)
-        amo.group(by=('host', 'uri'), count=True).top(2, count='desc')
+        amo.where(host='aplavin.ru').group(by=('host', 'uri'), count=True).top(2, count='desc')
         print amo.execute()
 
 
