@@ -15,7 +15,7 @@ class AMongoTest(unittest.TestCase):
 
         actual = amo. \
             group(by=('host', 'uri'), add_count=True). \
-            where(and_({'host': 'aplavin.ru'}, {'uri': '/'})). \
+            where(or_(and_({'host': 'aplavin.ru'}, {'uri': '/'}), {'host': 'blog.aplavin.ru'})). \
             sort(count=-1). \
             group(by='host', count=sum_('count'), uris=push_({'uri': '$uri', 'count': '$count'})). \
             sort(('count', -1), 'host'). \

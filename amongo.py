@@ -105,7 +105,3 @@ def and_(a, b):
 
 def or_(a, b):
     return {'$or': [a, b]}
-
-
-def not_(a):
-    return {'$not': a}
