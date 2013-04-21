@@ -51,6 +51,14 @@ class AMongoObject(object):
         self.pipeline.append({'$project': project_stage})
         return self
 
+    def unwind(self, array_field=None, **kwargs):
+        if array_field is not None and kwargs:
+            raise Exception('Passing both array_field and keyword arguments is unsupported')
+        if len(kwargs) > 1:
+            raise Exception('Unwind on multiple fields not supported')
+        self.pipeline.append({'$unwind': '$%s' % (array_field if array_field is not None else kwargs.keys()[0])})
+        return self
+
     def match(self, condition=None, **kwargs):
         if condition is not None and kwargs:
             raise Exception('Passing both condition and keyword arguments is unsupported')
