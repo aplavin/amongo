@@ -26,12 +26,15 @@ class AMongoObject(object):
         if isinstance(by, basestring):
             by = (by, )
 
-        for key_part in by:
-            if isinstance(key_part, basestring):
-                group_stage['_id'][key_part] = '$%s' % key_part
-                project_stage[key_part] = '$_id.%s' % key_part
-            else:
-                raise Exception('Unsupported value in "by" parameter')
+        if not by:
+            group_stage['_id'] = None
+        else:
+            for key_part in by:
+                if isinstance(key_part, basestring):
+                    group_stage['_id'][key_part] = '$%s' % key_part
+                    project_stage[key_part] = '$_id.%s' % key_part
+                else:
+                    raise Exception('Unsupported value in "by" parameter')
 
         if add_count is True:
             group_stage['count'] = {'$sum': 1}
